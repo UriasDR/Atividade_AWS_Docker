@@ -19,7 +19,9 @@ Você também precisa ter o aws cli configurado com suas credenciais de acesso e
 
 É imoportante criar um par de chaves na aws para iniciar o provisionamento e ter acesso as instâncias caso necessário. Para criar um par de chaves na AWS pelo CLI, você pode usar o seguinte comando:
 `AWS CLI`
-```aws ec2 create-key-pair --key-name my-key-pair --query 'KeyMaterial' --output text > my-key-pair.pem```
+```
+aws ec2 create-key-pair --key-name my-key-pair --query 'KeyMaterial' --output text > my-key-pair.pem
+```
 
 Nesse comando, substitua my-key-pair pelo nome que deseja dar ao par de chaves. O comando irá gerar um arquivo my-key-pair.pem que contém a chave privada.
 
