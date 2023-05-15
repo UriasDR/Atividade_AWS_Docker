@@ -74,7 +74,7 @@ Após isso iniciará o processo de provisionamento do ambiente com base na infra
 ## O processo de execução irá seguir as seguintes etapas:
 
 ### 1. Criar a VPC.
- O primeiro recuso a ser provisionado será a VPC. Ela será usada para criar uma rede virtual personalizada que pode ser conectada com outros recursos da AWS, como instâncias EC2, RDS, EFS, ELB, entre outros. Nessa fase também serão criadas as subnets públicas e privadas necessárias para a aplicação. O arquivo responsável pela criação da VPC e sub-redes públicas e privadas é o network.tf.
+O primeiro recurso a ser provisionado será a VPC. Ela será usada para criar uma rede virtual personalizada que pode ser conectada com outros recursos da AWS, como instâncias EC2, RDS, EFS, ELB, entre outros. Nessa fase também serão criadas as subnets públicas e privadas necessárias para a aplicação. O arquivo responsável pela criação da VPC e sub-redes públicas e privadas é o network.tf.
 
 ### 2. Provisionar o Internet Gateway.
 Após isso, será provisionado o Internet Gateway. Que será usado para permitir que nossa aplicação se comunique com a Internet. Ainda com responsabilidade do arquivo network.tf.
@@ -93,7 +93,9 @@ Agora, será provisionado um Amazon RDS com mysql para armazenar os dados do con
 
 ### 7. Provisionar o Auto Scaling.
 Após a finalização do recurso RDS e obtenção do endpoint do mesmo, será criado o Auto Scaling a partir do arquivo autoscaling.tf. Ele será usado para aumentar ou diminuir automaticamente o número de instâncias da nossa aplicação com base na demanda. Ele também será o responsável por carregar dentro do launch template o *user data* de nossas máquinas virtuais que irão executar os containers.
-bash
+
+### Nesse *user data* serão executados aluguns comandos importantes de serem destacados:
+
 ```
 #!/bin/bash
               yum update -y
@@ -143,13 +145,16 @@ volumes:
   db_data:' > compose.yaml
               docker-compose up -d 
 ```
-### Nesse *user data* serão executados aluguns comandos importantes de serem destacados:
+
+Comandos responsáveis pela instalação do *docker-compose* que será utilizado para a criação dos containeres *Wordpress* e *Mysql*.
+
 ```
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
-Comandos responsáveis pela instalação do *docker-compose* que será utilizado para a criação dos containeres *Wordpress* e *Mysql*.
+Comandos responsáveis pela montagem do Amazon Elastic File System (EFS), que irá armazenar o arquivo *compose.yaml*.
+
 ```
 sudo mkdir /efs
 cd /
@@ -157,7 +162,8 @@ sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,ret
 sudo echo ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0 | sudo tee -a /etc/fstab
 ```
 
-Comandos responsáveis pela montagem do Amazon Elastic File System (EFS), que irá armazenar o arquivo *compose.yaml*.
+Aqui será adicionado ao diretório os arquivos necessários para execução dos containers docker(docker-compose.yaml), onde os mesmos serão movidos para dentro do ponto de montagem do efs para dentro de um arquivo chamado compose.yaml.
+
 ```
 echo '
 version: "3"
@@ -190,14 +196,11 @@ volumes:
   wp_data:
   db_data:' > compose.yaml
   ```
-
-Aqui será adicionado ao repositório os arquivos necessários para execução dos containers docker(docker-compose.yaml), onde os mesmos serão movidos para dentro do ponto de montagem do efs para dentro de um arquivo chamado compose.yaml.
+  
+Por fim serão inicializados os containeres que irão virtualizar as aplicações *Wordpress* e *Mysql*.
 ```
 docker-compose up 
 ```
-
-Por fim será inicializado os containeres que irão virtualizar a aplicação *Wordpress* e *Mysql*.
-
 
 ### 8. Provisionar o ALB.
 Por último, será criado o Application Load Balancer (ALB) e target groups pelo arquivo ALB.tf. Ele será usado para distribuir o tráfego entre as instâncias da nossa aplicação.
@@ -217,14 +220,14 @@ aws elbv2 describe-load-balancers --query 'LoadBalancers[*].DNSName' --output te
 
 ![image](https://github.com/MarcoBosc/akigaraiow/assets/105826129/26694534-b917-4637-a517-609dee392261)
 
-Após isso basta colar o DNS no seu navegador para acessar a aplicação:
+Após isto basta colar o DNS no seu navegador para acessar a aplicação:
 
 ![image](https://github.com/MarcoBosc/akigaraiow/assets/105826129/4b1e3ec5-2455-4040-be26-a10069ce1229)
 
 ## IMPORTANTE
 Caso seja necessário realizar alguma alteração na aplicação, segue outros comandos terraform úteis para suas modificações.
 
-O comando terraform fmt é capaz de formatar todos seus arquivos .tf para prevenir erros de identação, a saída do comando retorna todos os arquivos em que alguma alteração na identação foi necessária. Caso seja necessária alguma formatação, saída do comando *terraform fmt* será a seguinte:
+O comando `terraform fmt` é capaz de formatar todos seus arquivos .tf para prevenir erros de identação, a saída do comando retorna todos os arquivos em que alguma alteração na identação foi necessária. Caso seja necessária alguma formatação, saída do comando *terraform fmt* será a seguinte:
 
 ![output docker fmt](https://github.com/MarcoBosc/PBProjetoAwsDocker/assets/105826129/7e070e58-7e09-49fd-9d97-5a6f174677ff)
 
