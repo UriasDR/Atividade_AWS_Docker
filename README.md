@@ -10,8 +10,10 @@ Antes de começar, você precisará ter uma conta na AWS e instalar o Terraform 
   
 Você pode configurar suas credenciais com o comando:
   terraform
-   ``export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY
-   export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY``
+  ```
+   export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY
+   export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
+  ```
    
 Você também precisa ter o aws cli configurado com suas credenciais de acesso e para a região us-east-1(Você pode saber mais sobre a configuração do aws cli clicando [aqui](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure..html)).
 
@@ -35,8 +37,10 @@ Lembre-se de baixar a chave e guardá-la com segurança pois ela apenas pode ser
 Para iniciar o provisionamento basta utilizar três comandos em sequência no diretório *terraform-provisioning*.
 
 O primeiro comando a ser realizado é:
+```
 terraform
 terraform init
+```
  
 Que irá inicializar um diretório de trabalho do Terraform, incluindo a instalação de plugins e a configuração de backends de estado.
 
@@ -45,8 +49,10 @@ Que irá inicializar um diretório de trabalho do Terraform, incluindo a instala
 ![output terraform init](https://github.com/MarcoBosc/akigaraiow/assets/105826129/0dc12e2f-16ea-4a16-b071-21d3b119e3d9)
 
 Após inicializar o ambiente de trabalho do terraform, utilize o comando: 
+```
 terraform
 terraform plan -out=plan.out
+```
  
 Que será usado para criar um arquivo de plano de execução da infraestrutura.
 
@@ -57,8 +63,10 @@ Que será usado para criar um arquivo de plano de execução da infraestrutura.
 
 
 O terceiro comando a ser executado é o comando:
+```
 terraform
 terraform apply plan.out
+```
 
 O comando irá aplicar a infraestrutura projetada nos arquivos do Terraform dentro ambiente da aws. Utilizando como base os arquivos do plano de execução *plan.out* criado anteriormente.
 
@@ -87,6 +95,7 @@ Agora, será provisionado um Amazon RDS com mysql para armazenar os dados do con
 ### 7. Provisionar o Auto Scaling.
 Após a finalização do recurso RDS e obtenção do endpoint do mesmo, será criado o Auto Scaling a partir do arquivo autoscaling.tf. Ele será usado para aumentar ou diminuir automaticamente o número de instâncias da nossa aplicação com base na demanda. Ele também será o responsável por carregar dentro do launch template o *user data* de nossas máquinas virtuais que irão executar os containers.
 bash
+```
 #!/bin/bash
               yum update -y
               yum upgrade -y
@@ -134,21 +143,25 @@ volumes:
   wp_data:
   db_data:' > compose.yaml
               docker-compose up -d 
-
+```
 ### Nesse *user data* serão executados aluguns comandos importantes de serem destacados:
+```
 bash
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+```
 
 Comandos responsáveis pela instalação do *docker-compose* que será utilizado para a criação dos containeres *Wordpress* e *Mysql*.
-
+```
 bash
 sudo mkdir /efs
 cd /
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs
 sudo echo ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0 | sudo tee -a /etc/fstab
+```
 
 Comandos responsáveis pela montagem do Amazon Elastic File System (EFS), que irá armazenar o arquivo *compose.yaml*.
+```
 bash
 echo '
 version: "3"
@@ -166,7 +179,7 @@ services:
     volumes:
       - /efs/wp_data:/var/www/html
   db:
-    image: mysql:8.0.27
+    image: mysql:latest
     volumes:
       - /efs/db_data:/var/lib/mysql
     restart: always
@@ -180,11 +193,13 @@ services:
 volumes:
   wp_data:
   db_data:' > compose.yaml
+  ```
 
 Aqui será adicionado ao repositório os arquivos necessários para execução dos containers docker(docker-compose.yaml), onde os mesmos serão movidos para dentro do ponto de montagem do efs para dentro de um arquivo chamado compose.yaml.
-
+```
 bash
 docker-compose up 
+```
 
 Por fim será inicializado os containeres que irão virtualizar a aplicação *Wordpress* e *Mysql*.
 
@@ -201,9 +216,10 @@ O DNS de acesso para as instâncias criadas será mostrado abaixo após a valida
 ![image](https://github.com/MarcoBosc/atividade-aws-docker/assets/105826129/f1ae5b89-dbbe-4961-a954-1f10e8925824)
 
 Caso perca o DNS após o final do provisionamento da infraestrutura na aws, será possível conseguir o endereço dns do load balancer da aplicação construida anteriormente através de um comando cli:
-
+```
 bash
 aws elbv2 describe-load-balancers --query 'LoadBalancers[*].DNSName' --output text
+```
 
 ![image](https://github.com/MarcoBosc/akigaraiow/assets/105826129/26694534-b917-4637-a517-609dee392261)
 
