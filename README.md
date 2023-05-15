@@ -79,11 +79,11 @@ sudo mkdir /efs
 cd /
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs
 sudo echo ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0 | sudo tee -a /etc/fstab
-git clone https://github.com/MarcoBosc/atividade-aws-docker.git
-mv atividade-aws-docker /efs
+git clone https://github.com/UriasDR/Atividade_AWS_Docker.git
+mv Atividade_AWS_Docker /efs
 cd /efs
 mkdir db_data && mkdir wp_data
-cd atividade-aws-docker
+cd Atividade_AWS_Docker
 docker-compose up 
 ```
 ### Nesse **user data** serão executados aluguns comandos importantes de serem destacados:
@@ -101,11 +101,11 @@ sudo echo ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs nfs4 nfsv
 ```
 Comandos responsáveis pela montagem do Amazon Elastic File System (EFS), que irá armazenar o arquivo **compose.yaml**.
 ```bash
-git clone https://github.com/MarcoBosc/atividade-aws-docker.git
-mv atividade-aws-docker /efs
+git clone https://github.com/UriasDR/Atividade_AWS_Docker.git
+mv Atividade_AWS_Docker /efs
 cd /efs
 mkdir db_data && mkdir wp_data
-cd atividade-aws-docker
+cd Atividade_AWS_Docker
 ```
 Aqui será baixado do repositório os arquivos necessários para execução dos containers docker, onde os mesmos serão movidos para dentro do ponto de montagem do efs, então serão criados os diretórios que irão ser utilizados de volume para os containeres.
 
