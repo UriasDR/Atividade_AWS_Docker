@@ -10,8 +10,8 @@ Antes de começar, você precisará ter uma conta na AWS e instalar o Terraform 
   
 Você pode configurar suas credenciais com o comando:
   terraform
-   ```export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY
-   export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY```
+   ``export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY
+   export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY``
    
 Você também precisa ter o aws cli configurado com suas credenciais de acesso e para a região us-east-1(Você pode saber mais sobre a configuração do aws cli clicando [aqui](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure..html)).
 
