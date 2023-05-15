@@ -13,7 +13,7 @@ services:
     volumes:
       - /efs/wp_data:/var/www/html
   db:
-    image: mysql:8.0.28
+    image: mysql:latest
     volumes:
       - /efs/db_data:/var/lib/mysql
     restart: always
