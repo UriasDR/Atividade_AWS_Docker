@@ -145,14 +145,12 @@ volumes:
 ```
 ### Nesse *user data* serão executados aluguns comandos importantes de serem destacados:
 ```
-bash
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 Comandos responsáveis pela instalação do *docker-compose* que será utilizado para a criação dos containeres *Wordpress* e *Mysql*.
 ```
-bash
 sudo mkdir /efs
 cd /
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs
@@ -161,7 +159,6 @@ sudo echo ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs nfs4 nfsv
 
 Comandos responsáveis pela montagem do Amazon Elastic File System (EFS), que irá armazenar o arquivo *compose.yaml*.
 ```
-bash
 echo '
 version: "3"
 services:
@@ -196,7 +193,6 @@ volumes:
 
 Aqui será adicionado ao repositório os arquivos necessários para execução dos containers docker(docker-compose.yaml), onde os mesmos serão movidos para dentro do ponto de montagem do efs para dentro de um arquivo chamado compose.yaml.
 ```
-bash
 docker-compose up 
 ```
 
@@ -216,7 +212,6 @@ O DNS de acesso para as instâncias criadas será mostrado abaixo após a valida
 
 Caso perca o DNS após o final do provisionamento da infraestrutura na aws, será possível conseguir o endereço dns do load balancer da aplicação construida anteriormente através de um comando cli:
 ```
-bash
 aws elbv2 describe-load-balancers --query 'LoadBalancers[*].DNSName' --output text
 ```
 
