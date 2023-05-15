@@ -38,7 +38,6 @@ Para iniciar o provisionamento basta utilizar três comandos em sequência no di
 
 O primeiro comando a ser realizado é:
 ```
-terraform
 terraform init
 ```
  
@@ -50,7 +49,6 @@ Que irá inicializar um diretório de trabalho do Terraform, incluindo a instala
 
 Após inicializar o ambiente de trabalho do terraform, utilize o comando: 
 ```
-terraform
 terraform plan -out=plan.out
 ```
  
@@ -64,7 +62,6 @@ Que será usado para criar um arquivo de plano de execução da infraestrutura.
 
 O terceiro comando a ser executado é o comando:
 ```
-terraform
 terraform apply plan.out
 ```
 
