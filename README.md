@@ -227,6 +227,11 @@ Após isto basta colar o DNS no seu navegador para acessar a aplicação:
 ### Observações:
 Em caso do erro 502 - Bad Gateway, pode ser necessário esperar alguns minutos até que as instâncias estejam 100% online para que o serviço funcione corretamente e não gere nenhum tipo erro.
 
+Se for necessário entrar nas instâncias privadas, será preciso criar uma terceira instância que será o Bastion. Esta instância deve ser criada manualmente no serviço de EC2, deve ser atrelado a ela a VPC e Security Group criado pelo terraform. Acessando o Bastion via ssh, é possível se conectar as instâncias privadas. O comando será o mesmo que foi utilizado para se conectar ao Bastion.
+```
+ssh -i Caminho/onde/esta/a/chave/Nome_da_sua_chave.pem ec2-user@IP_da_instancia
+```
+
 ## IMPORTANTE
 Caso seja necessário realizar alguma alteração na aplicação, segue outros comandos terraform úteis para suas modificações.
 
