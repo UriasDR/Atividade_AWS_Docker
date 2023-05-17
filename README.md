@@ -17,7 +17,7 @@ Você pode configurar suas credenciais com o comando:
    
 Você também precisa ter o aws cli configurado com suas credenciais de acesso e para a região us-east-1(Você pode saber mais sobre a configuração do aws cli clicando [aqui](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure..html)).
 
-É imoportante criar um par de chaves na aws para iniciar o provisionamento e ter acesso as instâncias caso necessário. Para criar um par de chaves na AWS pelo CLI, você pode usar o seguinte comando:
+É importante criar um par de chaves na aws para iniciar o provisionamento e ter acesso as instâncias caso necessário. Para criar um par de chaves na AWS pelo CLI, você pode usar o seguinte comando:
 `AWS CLI`
 ```
 aws ec2 create-key-pair --key-name my-key-pair --query 'KeyMaterial' --output text > my-key-pair.pem
@@ -109,8 +109,8 @@ Após a finalização do recurso RDS e obtenção do endpoint do mesmo, será cr
               systemctl start efs && systemctl enable efs
               mkdir /efs
               cd /
-              mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs
-              echo ${aws_efs_mount_target.efs_mount_target_a.ip_address}:/ /efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0 | sudo tee -a /etc/fstab
+              mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${aws_efs_file_system.efs.id}:/ /efs
+              echo ${aws_efs_file_system.efs.id}:/ /efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0 | sudo tee -a /etc/fstab
               cd /efs
               mkdir db_data && mkdir wp_data
               echo '
@@ -227,7 +227,7 @@ Após isto basta colar o DNS no seu navegador para acessar a aplicação:
 ### Observações:
 Em caso do erro 502 - Bad Gateway, pode ser necessário esperar alguns minutos até que as instâncias estejam 100% online para que o serviço funcione corretamente e não gere nenhum tipo erro.
 
-Se for necessário entrar nas instâncias privadas, será preciso criar uma terceira instância que será o Bastion. Esta instância deve ser criada manualmente no serviço de EC2, deve ser atrelado a ela a VPC e Security Group criado pelo terraform. Acessando o Bastion via ssh, é possível se conectar as instâncias privadas. O comando será o mesmo que foi utilizado para se conectar ao Bastion.
+Se for necessário entrar nas instâncias privadas, será preciso criar uma terceira instância que será o Bastion. Esta instância deve ser criada manualmente no serviço de EC2, deve ser atrelado a ela a VPC, alguma das subnets públicas e o Security Group chamado _Bastion_ criado pelo terraform. Acessando o Bastion via ssh, é possível se conectar as instâncias privadas. O comando será o mesmo que foi utilizado para se conectar ao Bastion.
 ```
 ssh -i Caminho/onde/esta/a/chave/Nome_da_sua_chave.pem ec2-user@IP_da_instancia
 ```
