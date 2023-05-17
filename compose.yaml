@@ -1,0 +1,30 @@
+version: '3'
+services:
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - 80:80
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=${ENDPOINT}
+      - WORDPRESS_DB_USER=admin
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - /efs/wp_data:/var/www/html
+  db:
+    image: mysql:8.0.27
+    volumes:
+      - /efs/db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=wordpress
+      - MYSQL_ROOT_PASSWORD=wordpress
+      - MYSQL_HOST=${ENDPOINT}
+      - MYSQL_PORT=3306
+volumes:
+  wp_data:
+  db_data:
+
